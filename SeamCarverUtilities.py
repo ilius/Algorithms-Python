@@ -4,15 +4,13 @@ def printVerticalSeam(sc):
 	totalSeamEnergy = 0
 	for row in range(sc.height()):
 		for col in range(sc.width()):
-			seam_col = seam[row_index]
-			lmarker = ' '
-			rmarker = ' '
-			if col == seam_col:
-				lmarker = '['
-				rmarker = ']'
-				totalSeamEnergy += sc.energy(col, row)
+			seam_col = seam[row]
+			lmarker = '[' if col == seam_col else ' '
+			rmarker = ']' if col == seam_col else ' '
 			print '{:s}{:>6d}{:s}'.format(lmarker, sc.energy(col, row), rmarker),
 		print
+
+	totalSeamEnergy = sum(sc.energy(col, row) for col, row in zip(seam, range(sc.height())))
 	print "\nTotal seam energy: {:d}".format(totalSeamEnergy)
 
 
