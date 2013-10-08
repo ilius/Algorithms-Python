@@ -20,7 +20,7 @@ sc = SeamCarverLib.SeamCarver(pic)
 print "print vertical seam 1"
 print sc.width(), sc.height()
 #SeamCarverUtilities.printVerticalSeamEnergy(sc)
-SeamCarverUtilities.printVerticalSeam(sc)
+SeamCarverUtilities.printSeam(sc, direction="vertical")
 #SeamCarverUtilities.distToArray(sc)
 			
 print "remove vertical seam"
@@ -28,10 +28,10 @@ s = sc.findVerticalSeam()
 sc.removeVerticalSeam(s)
 print sc.width(), sc.height()
 print "find vertical seam"
-SeamCarverUtilities.printVerticalSeam(sc)
+SeamCarverUtilities.printSeam(sc, direction="vertical")
 
 print "print horizontal seam"
-SeamCarverUtilities.printHorizontalSeam(sc)
+SeamCarverUtilities.printSeam(sc, direction="horizontal")
 #SeamCarverUtilities.distToArray(sc)
 #SeamCarverUtilities.printHorizontalSeamEnergy(sc)
 
@@ -41,7 +41,7 @@ sc.removeHorizontalSeam(s)
 print sc.width(), sc.height()
 #SeamCarverUtilities.printHorizontalSeamEnergy(sc)
 print "find horizontal seam"
-SeamCarverUtilities.printHorizontalSeam(sc)
+SeamCarverUtilities.printSeam(sc, direction="horizontal")
 #SeamCarverUtilities.distToArray(sc)
 
 			
