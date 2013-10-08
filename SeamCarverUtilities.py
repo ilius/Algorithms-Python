@@ -1,5 +1,5 @@
 def printSeam(sc, direction):
-	"vertical seam is a list of cols"
+	"""vertical seam is a list of cols"""
 	if direction == "vertical":
 		seam = sc.findVerticalSeam()
 		seam_indices = zip(seam, range(sc.height()))
@@ -21,7 +21,7 @@ def printSeam(sc, direction):
 	print "\nTotal seam energy: {:d}".format(totalSeamEnergy)
 
 def printVerticalSeamEnergy(sc):
-	"vertical seam is a list of cols"
+	"""vertical seam is a list of cols"""
 	seam = sc.findVerticalSeam()
 	totalSeamEnergy = 0
 	for row in range(sc.height()):

@@ -6,7 +6,7 @@ _BORDER_ENERGY = 195705
 import pdb
 
 class SeamCarver(object):
-	"removes seams from an image"
+	"""removes seams from an image"""
 	def __init__(self, picture):
 		self._img = picture.imageArray
 		self._height = picture.num_rows
@@ -33,12 +33,12 @@ class SeamCarver(object):
 		return self._height
 
 	def energy(self, col, row):
-		"return energy of pixel in (col, row)"
+		"""return energy of pixel in (col, row)"""
 		if self._isValid(col, row):
 			return self._energy[self._toLinear(col, row)]
 
 	def findVerticalSeam(self, transposed=False):
-		"return vertical seam in image"
+		"""return vertical seam in image"""
 		# vertical seam = sequence of cols; seam[0] is col of row 0
 		# row-indexed seam
 		seam = [-1 for _ in range(self._height)]
@@ -54,7 +54,7 @@ class SeamCarver(object):
 		return seam
 
 	def findHorizontalSeam(self, transposed=True):
-		"return horizontal seam in image"
+		"""return horizontal seam in image"""
 		# tranpose dimensions
 		self._exchDims()
 
@@ -67,7 +67,7 @@ class SeamCarver(object):
 		return seam
 
 	def _shiftImgUp(self, (col, row)):
-		"remove horizontal seam in img and energy array by shifting up each col"
+		"""remove horizontal seam in img and energy array by shifting up each col"""
 		for r in range(row, self._height - 1):
 			i = self._width * r + col
 			rchan_index = i*3
@@ -77,7 +77,7 @@ class SeamCarver(object):
 			self._energy[i] = self._energy[i + self._width]
 
 	def _removeSeam(self, seam):
-		"remove seam of pixels from image"
+		"""remove seam of pixels from image"""
 		# remove horizontal seam
 		if(len(seam)) != self._width or self._width < 2:
 			raise ValueError
@@ -91,7 +91,7 @@ class SeamCarver(object):
 
 
 	def removeVerticalSeam(self, seam):
-		"remove vertical seam of pixels from image"
+		"""remove vertical seam of pixels from image"""
 		if (len(seam) != self._height or self._height == 0 or self._width == 2):
 			raise ValueError
 		indexes_to_remove = map(lambda (r, col): self._width * r + col, enumerate(seam))
@@ -128,7 +128,7 @@ class SeamCarver(object):
 		self._sink = self._source + 1
 	
 	def removeHorizontalSeam(self, seam):
-		"remove horizontal seam of pixels"
+		"""remove horizontal seam of pixels"""
 		self._removeSeam(seam)
 
 		# update energy
@@ -147,13 +147,13 @@ class SeamCarver(object):
 					
 
 	def _onEdge(self, col, row):
-		"True if pixel is on left, top, or right edge"
+		"""True if pixel is on left, top, or right edge"""
 		return col == 0 or col == self._width - 1 or row == 0
 
 	def _updateEnergy(self, R_chan, resized_width):
-		'''re-calculate energy values for pixels on either side of seam
+		"""re-calculate energy values for pixels on either side of seam
 
-		R_chan is a list of R channels'''
+		R_chan is a list of R channels"""
 		for R in R_chan:
 			# index = index of seam pixel wrt original image
 			index = R / self._num_channels
@@ -199,9 +199,9 @@ class SeamCarver(object):
 					self._energyGrad(resized_index - 1, resized_width)
 			
 	def _energyGrad(self, index, width):
-		'''Calculate energy of pixel in resized image. Update self._energy
+		"""Calculate energy of pixel in resized image. Update self._energy
 
-		uses resized_index and resized_width'''
+		uses resized_index and resized_width"""
 
 		left = (index  - 1) * self._num_channels
 		right = (index + 1) * self._num_channels
@@ -231,18 +231,18 @@ class SeamCarver(object):
 		return (x - y)**2
 
 	def _exchDims(self):
-		"exchange self._width and self._height"
+		"""exchange self._width and self._height"""
 		swap = self._width
 		self._width = self._height
 		self._height = swap
 
 	def _toLinear(self, col, row):
-		"converts pixel from (col, row) to single index"
+		"""converts pixel from (col, row) to single index"""
 		if self._isValid(col, row):
 			return row * self._width + col
 
 	def _toGrid(self, num):
-		"converts pixel from single index to (col, row)"
+		"""converts pixel from single index to (col, row)"""
 		if self._isValid(num):
 			row = num / self._width
 			col = num % self._width
@@ -261,7 +261,7 @@ class SeamCarver(object):
 				return True
 
 	def _buildGraph(self, transposed):
-		"pixels are nodes; edges define precedence constraints in a seam"
+		"""pixels are nodes; edges define precedence constraints in a seam"""
 		# graph data structures
 		self._edgeTo = [_SENTINEL for _ in range(self._num_pixels + 2)]	# add 2 for source, sink pixels
 		self._distTo = [_INF for _ in range(self._num_pixels + 2)]

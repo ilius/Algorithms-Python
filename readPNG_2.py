@@ -2,13 +2,13 @@ import png, array
 
 
 class Picture(object):
-	"reads a png image from a filename"
+	"""reads a png image from a filename"""
 	#BORDER_ENERGY = 195075
 	BORDER_ENERGY = 195705
 	
 	
 	def __init__(self, pngfilename):
-		"reads in a .png image"
+		"""reads in a .png image"""
 		_CH = 3		# number of channels (R,G,B = 3; R,G,B,A = 4)
 		_r = png.Reader(filename=pngfilename)
 		res = _r.read()
@@ -44,7 +44,7 @@ class Picture(object):
 		
 		# for images with more than 2 rows
 		for _row_next in res[2]:
-			"build image array and energy array"
+			#build image array and energy array
 
 			# add _row_next to image array
 			self.imageArray.extend(_row_next)
