@@ -25,13 +25,6 @@ class SeamCarver(object):
 		self._edgeTo = []
 		self._distTo = []
 
-
-	def width(self):
-		return self._width
-
-	def height(self):
-		return self._height
-
 	def energy(self, col, row):
 		"""return energy of pixel in (col, row)"""
 		if self._isValid(col, row):

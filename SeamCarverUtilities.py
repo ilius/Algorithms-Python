@@ -5,8 +5,8 @@ def printSeam(sc, direction):
 	else:
 		seam = sc.findHorizontalSeam()
 
-	for row in range(sc.height()):
-		for col in range(sc.width()):
+	for row in range(sc._height):
+		for col in range(sc._width):
 			if direction == "vertical":
 				is_on_seam = col == seam[row]
 			else:
