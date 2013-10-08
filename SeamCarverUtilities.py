@@ -5,8 +5,7 @@ def printVerticalSeam(sc):
 	for row in range(sc.height()):
 		for col in range(sc.width()):
 			seam_col = seam[row]
-			lmarker = '[' if col == seam_col else ' '
-			rmarker = ']' if col == seam_col else ' '
+			lmarker, rmarker = ('[', ']') if col == seam_col else (' ',' ')
 			print '{:s}{:>6d}{:s}'.format(lmarker, sc.energy(col, row), rmarker),
 		print
 
