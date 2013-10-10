@@ -279,21 +279,16 @@ class SeamCarver(object):
 
 	def _edgeTodistTo(self, pixel, transposed, edgeL=False, edgeR=False):
 		# returns pixel connected to v with min energy
+		up_pixel = pixel - self._width
+		right_up_diagonal_pixel = pixel - self._width + 1
+		left_up_diagonal_pixel = pixel - self._width - 1
+
 		if edgeL:
 			# left edge
-			up_pixel = pixel - self._width
-			right_up_diagonal_pixel = pixel - self._width + 1
 			left_up_diagonal_pixel = up_pixel
 		elif edgeR:
 			# right edge
-			left_up_diagonal_pixel = pixel - self._width - 1
-			up_pixel = pixel - self._width
 			right_up_diagonal_pixel = up_pixel
-		else:
-			# pixels connect to pixel
-			left_up_diagonal_pixel = pixel - self._width - 1
-			up_pixel = pixel - self._width
-			right_up_diagonal_pixel = pixel - self._width + 1
 
 		# energy of pixels connected to pixel
 		if transposed:
