@@ -38,7 +38,7 @@ class SeamCarver(object):
 		#   - col-indexed seam
 		if direction == "horizontal":
 			self._exchDims()
-		seam = [-1 for _ in range(self._height)]
+		seam = [-1] * self._height
 		self._buildGraph(transposed)
 		row = self._height - 1
 		v = self._edgeTo[self._sink]
