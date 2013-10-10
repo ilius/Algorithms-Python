@@ -277,44 +277,44 @@ class SeamCarver(object):
 
 
 
-	def _edgeTodistTo(self, v, transposed, edgeL=False, edgeR=False):
+	def _edgeTodistTo(self, pixel, transposed, edgeL=False, edgeR=False):
 		# returns pixel connected to v with min energy
 		if edgeL:
 			# left edge
-			vC = v - self._width
-			vRD = v - self._width + 1
-			vLU = vC
+			up_pixel = pixel - self._width
+			right_up_diagonal_pixel = pixel - self._width + 1
+			left_up_diagonal_pixel = up_pixel
 		elif edgeR:
 			# right edge
-			vLU = v - self._width - 1
-			vC = v - self._width
-			vRD = vC
+			left_up_diagonal_pixel = pixel - self._width - 1
+			up_pixel = pixel - self._width
+			right_up_diagonal_pixel = up_pixel
 		else:
-			# pixels connect to v
-			vLU = v - self._width - 1
-			vC = v - self._width
-			vRD = v - self._width + 1
+			# pixels connect to pixel
+			left_up_diagonal_pixel = pixel - self._width - 1
+			up_pixel = pixel - self._width
+			right_up_diagonal_pixel = pixel - self._width + 1
 
-		# energy of pixels connected to v
+		# energy of pixels connected to pixel
 		if transposed:
-			(colU, rowU) = self._toGrid(vLU)
-			(colC, rowC) = self._toGrid(vC)
-			(colD, rowD) = self._toGrid(vRD)
+			(colU, rowU) = self._toGrid(left_up_diagonal_pixel)
+			(colC, rowC) = self._toGrid(up_pixel)
+			(colD, rowD) = self._toGrid(right_up_diagonal_pixel)
 			# read energy
 			eLU = self._energy[self._height * colU + rowU]
 			eC = self._energy[self._height * colC + rowC]
 			eRD = self._energy[self._height * colD + rowD]		
 		else:
 			# read energy directly from energy array
-			eLU = self._energy[vLU]
-			eC = self._energy[vC]
-			eRD = self._energy[vRD]
-			#print (eLU, vLU), (eC, vC), (eRD, vRD)
+			eLU = self._energy[left_up_diagonal_pixel]
+			eC = self._energy[up_pixel]
+			eRD = self._energy[right_up_diagonal_pixel]
+			#print (eLU, left_up_diagonal_pixel), (eC, up_pixel), (eRD, right_up_diagonal_pixel)
 		# find min distance and its associated vertex
-		dist, from_vertex = min((self._distTo[vLU] + eLU, vLU), (self._distTo[vC] + eC, vC), (self._distTo[vRD] + eRD, vRD))
-		#e, vertex = min([(eC, vC), (eLU, vLU), (eRD, vRD)])
-		self._edgeTo[v] = from_vertex
-		self._distTo[v] = dist
+		dist, from_vertex = min((self._distTo[left_up_diagonal_pixel] + eLU, left_up_diagonal_pixel), (self._distTo[up_pixel] + eC, up_pixel), (self._distTo[right_up_diagonal_pixel] + eRD, right_up_diagonal_pixel))
+		#e, vertex = min([(eC, up_pixel), (eLU, left_up_diagonal_pixel), (eRD, right_up_diagonal_pixel)])
+		self._edgeTo[pixel] = from_vertex
+		self._distTo[pixel] = dist
 
 
 
