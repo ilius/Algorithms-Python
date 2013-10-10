@@ -24,7 +24,7 @@ SeamCarverUtilities.printSeam(sc, direction="vertical")
 #SeamCarverUtilities.distToArray(sc)
 			
 print "remove vertical seam"
-s = sc.findSeam(transposed=False)
+s = sc.findSeam(direction="vertical")
 sc.removeVerticalSeam(s)
 print sc._width, sc._height
 print "find vertical seam"
@@ -36,7 +36,7 @@ SeamCarverUtilities.printSeam(sc, direction="horizontal")
 #SeamCarverUtilities.printHorizontalSeamEnergy(sc)
 
 print "remove horizontal seam"
-s = sc.findSeam(transposed=True)
+s = sc.findSeam(direction="horizontal")
 sc.removeHorizontalSeam(s)
 print sc._width, sc._height
 #SeamCarverUtilities.printHorizontalSeamEnergy(sc)
