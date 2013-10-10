@@ -30,10 +30,14 @@ class SeamCarver(object):
 		if self._isValid(col, row):
 			return self._energy[self._toLinear(col, row)]
 
-	def findVerticalSeam(self, transposed=False):
+	def findSeam(self, transposed=False):
 		"""return vertical seam in image"""
 		# vertical seam = sequence of cols; seam[0] is col of row 0
-		# row-indexed seam
+		# 	- row-indexed seam
+		# horizontal seam = sequence of rows; seam[0] is row of col 0
+		#   - col-indexed seam
+		if transposed:
+			self._exchDims()
 		seam = [-1 for _ in range(self._height)]
 		self._buildGraph(transposed)
 		row = self._height - 1
@@ -44,19 +48,8 @@ class SeamCarver(object):
 			row -= 1
 		#self._edgeTo = []
 		#self._distTo = []
-		return seam
-
-	def findHorizontalSeam(self, transposed=True):
-		"""return horizontal seam in image"""
-		# tranpose dimensions
-		self._exchDims()
-
-		# horizontal seam = sequence of rows; seam[0] is row of col 0
-		# col-indexed seam
-		seam = self.findVerticalSeam(transposed)
-		self._exchDims()
-		#self._edgeTo = []
-		#self._distTo = []
+		if transposed:
+			self._exchDims()
 		return seam
 
 	def _shiftImgUp(self, (col, row)):
