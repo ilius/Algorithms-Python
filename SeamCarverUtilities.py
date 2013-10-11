@@ -18,8 +18,10 @@ def printSeam(sc, direction):
 def calculateSeamEnergy(sc, direction):
 	seam = sc.findSeam(direction)
 
-	relevant_size = sc._height if direction == "vertical" else sc._width
-	seam_indices = zip(seam, relevant_size)
+	if direction == "vertical":
+		seam_indices = zip(seam, range(sc._height))
+	else:
+		seam_indices = zip(range(sc._width), seam)
 	totalSeamEnergy = sum(sc.energy(col, row) for col, row in seam_indices)
 	print "\nTotal seam energy: {:d}".format(totalSeamEnergy)
 	return totalSeamEnergy
