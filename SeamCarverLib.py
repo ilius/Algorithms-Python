@@ -36,10 +36,8 @@ class SeamCarver(object):
 		# 	- row-indexed seam
 		# horizontal seam = sequence of rows; seam[0] is row of col 0
 		#   - col-indexed seam
-		if direction == "horizontal":
-			self._exchDims()
 		seam = [-1] * self._height
-		self._buildGraph(transposed)
+		self._buildGraph(direction)
 		row = self._height - 1
 		v = self._edgeTo[self._sink]
 		while (v != self._source):
@@ -48,8 +46,6 @@ class SeamCarver(object):
 			row -= 1
 		#self._edgeTo = []
 		#self._distTo = []
-		if direction == "horizontal":
-			self._exchDims()
 		return seam
 
 	def _shiftImgUp(self, (col, row)):
@@ -216,12 +212,6 @@ class SeamCarver(object):
 	def _diff_squared(self, x, y):
 		return (x - y)**2
 
-	def _exchDims(self):
-		"""exchange self._width and self._height"""
-		swap = self._width
-		self._width = self._height
-		self._height = swap
-
 	def _toLinear(self, col, row):
 		"""converts pixel from (col, row) to single index"""
 		if self._isValid(col, row):
@@ -246,7 +236,7 @@ class SeamCarver(object):
 			else:
 				return True
 
-	def _buildGraph(self, transposed):
+	def _buildGraph(self, direction):
 		"""pixels are nodes; edges define precedence constraints in a seam"""
 		# graph data structures
 		self._edgeTo = [_SENTINEL for _ in range(self._num_pixels + 2)]	# add 2 for source, sink pixels
@@ -262,14 +252,23 @@ class SeamCarver(object):
 		# for each vertex (pixel), calculate edgeTo[], distTo[]
 		# start at row 1
 		for v in range(self._width, self._num_pixels):
-			if (v % self._width == 0):
-				# pixel is on left edge
-				self._edgeTodistTo(v, transposed, edgeL=True)
-			elif (v % self._width == self._width - 1):
-				# pixel is on right edge
-				self._edgeTodistTo(v, transposed, edgeR=True)
-			else:
-				self._edgeTodistTo(v, transposed)
+			edges = []
+			if v % self._width == 0:
+				edges.append('left')
+			if v % self._width == self._width - 1:
+				edges.append("right")
+			if v / self._width == 0:
+				edges.append("top")
+			if v / self._width == self._height - 1:
+				edges.append("bottom")
+
+			if direction == "vertical" and "top" in edges:
+				continue
+			if direction == "horizontal" and "left" in edges:
+				continue
+
+			self._edgeTodistTo(v, direction, edges)
+
 		# edgeTo[sink] is vertex in last row with min energy
 		index, min_energy = min(enumerate(self._distTo[self._num_pixels - self._width:self._num_pixels]), key=lambda (x, y): y)
 		self._distTo[self._sink] = min_energy
@@ -277,37 +276,34 @@ class SeamCarver(object):
 
 
 
-	def _edgeTodistTo(self, pixel, transposed, edgeL=False, edgeR=False):
+	def _edgeTodistTo(self, pixel, direction, edges):
 		# returns pixel connected to v with min energy
-		up_pixel = pixel - self._width
-		right_up_diagonal_pixel = pixel - self._width + 1
-		left_up_diagonal_pixel = pixel - self._width - 1
 
-		if edgeL:
-			# left edge
-			left_up_diagonal_pixel = up_pixel
-		elif edgeR:
-			# right edge
-			right_up_diagonal_pixel = up_pixel
+		if direction == "vertical":
+			ancestor_one = pixel - self._width - 1
+			ancestor_two = pixel - self._width
+			ancestor_three = pixel - self._width + 1
+			if 'left' in edges:
+				ancestor_one = ancestor_two
+			elif 'right' in edges:
+				ancestor_three = ancestor_two
 
-		# energy of pixels connected to pixel
-		if transposed:
-			(colU, rowU) = self._toGrid(left_up_diagonal_pixel)
-			(colC, rowC) = self._toGrid(up_pixel)
-			(colD, rowD) = self._toGrid(right_up_diagonal_pixel)
-			# read energy
-			eLU = self._energy[self._height * colU + rowU]
-			eC = self._energy[self._height * colC + rowC]
-			eRD = self._energy[self._height * colD + rowD]		
-		else:
-			# read energy directly from energy array
-			eLU = self._energy[left_up_diagonal_pixel]
-			eC = self._energy[up_pixel]
-			eRD = self._energy[right_up_diagonal_pixel]
-			#print (eLU, left_up_diagonal_pixel), (eC, up_pixel), (eRD, right_up_diagonal_pixel)
+		else: #horizontal
+			ancestor_one = pixel + self._width - 1
+			ancestor_two = pixel - 1
+			ancestor_three = pixel - self._width - 1
+			if 'top' in edges:
+				ancestor_three = ancestor_two
+			elif 'bottom' in edges:
+				ancestor_one = ancestor_two
+
+		eLU = self._energy[ancestor_one]
+		eC = self._energy[ancestor_two]
+		eRD = self._energy[ancestor_three]
+			#print (eLU, ancestor_one), (eC, ancestor_two), (eRD, ancestor_three)
 		# find min distance and its associated vertex
-		dist, from_vertex = min((self._distTo[left_up_diagonal_pixel] + eLU, left_up_diagonal_pixel), (self._distTo[up_pixel] + eC, up_pixel), (self._distTo[right_up_diagonal_pixel] + eRD, right_up_diagonal_pixel))
-		#e, vertex = min([(eC, up_pixel), (eLU, left_up_diagonal_pixel), (eRD, right_up_diagonal_pixel)])
+		dist, from_vertex = min((self._distTo[ancestor_one] + eLU, ancestor_one), (self._distTo[ancestor_two] + eC, ancestor_two), (self._distTo[ancestor_three] + eRD, ancestor_three))
+		#e, vertex = min([(eC, ancestor_two), (eLU, ancestor_one), (eRD, ancestor_three)])
 		self._edgeTo[pixel] = from_vertex
 		self._distTo[pixel] = dist
 
