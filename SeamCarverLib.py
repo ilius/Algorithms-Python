@@ -29,6 +29,8 @@ class SeamCarver(object):
 		"""return energy of pixel in (col, row)"""
 		if self._isValid(col, row):
 			return self._energy[self._toLinear(col, row)]
+		else:
+			print "invalid coordinates to energy: %s %s" % (col, row)
 
 	def findSeam(self, direction):
 		"""return vertical seam in image"""
