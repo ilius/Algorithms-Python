@@ -214,6 +214,39 @@ class EdgeWeightedDigraph(object):
 		else:
 			return "Error: missing argument"
 
+	@staticmethod
+	def fromEdgeListString(s):
+		'''
+			Gets a multi-line string like:
+				A->E	58
+				A->F	25
+				B->A	31
+				...
+			Returns a graph instance, and a list of vertix names
+		'''
+		import shlex
+		v_names = set()
+		edge_data = []
+		for line in s.split('\n'):
+			line = line.strip()
+			if not line:
+				continue
+			parts = shlex.split(line)
+			source_name, target_name = parts[0].split('->')
+			weight = float(parts[1])
+			##
+			v_names.add(source_name)
+			v_names.add(target_name)
+			edge_data.append((source_name, target_name, weight))
+		v_names = sorted(v_names)
+		## now v_names is a list that gets available vertix indeces and gives the name
+		V = len(v_names)
+		G = EdgeWeightedDigraph(V=V)
+		for source_name, target_name, weight in edge_data:
+			source = v_names.index(source_name)
+			target = v_names.index(target_name)
+			G.addEdge(DEdge(source, target, weight))
+		return G, v_names
 	def V(self):
 		"returns number of vertices"
 		return self._V
