@@ -3,7 +3,7 @@ import png
 def printSeam(sc, direction):
 	"""vertical seam is a list of cols"""
 	seam = sc.findSeam(direction)
-    totalSeamEnergy = 0
+	totalSeamEnergy = 0
 	for row in range(sc.height()):
 		for col in range(sc.width()):
 			is_on_seam = (col == seam[row]) if direction == "vertical" else (row == seam[col])
