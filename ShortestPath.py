@@ -11,6 +11,7 @@ _SENTINEL = -1
 class DijkSP(object):
 	def __init__(self, G, s, t = None):
 		"find the shortest path tree (in a directed graph with non-negative weights) from s to every other vertex using Dijkstra's alg"
+		self._G = G
 		self._s = s
 		self._distTo = [_INF for _ in range(G.V())]
 		self._distTo[s] = 0
@@ -19,10 +20,10 @@ class DijkSP(object):
 		self._pq.insert(s, 0)
 
 		while (not self._pq.isEmpty()):
-			v = self._pq.delMin() 			# add closest vertex to source to Tree
-			if t and v == t: return
-			for e in G.adj(v):
-				self._relax(e) 				# relax(e) updates the distTo and edgeTo data structures					
+			v = self._pq.delMin() # add closest vertex to source to Tree
+			if t and v == t:
+				return
+			self._relaxVertix(v)
 
 	def distTo(self, v):
 		"distance from src to vertex v"
@@ -43,7 +44,11 @@ class DijkSP(object):
 		path.append(e)
 		return path[::-1]
 
-	def _relax(self, edge):
+	def _relaxVertix(self, v):
+		for e in self._G.adj(v):
+			self._relaxEdge(e) # relaxEdge(e) updates the distTo and edgeTo data structures					
+
+	def _relaxEdge(self, edge):
 		"relaxes an edge by updating data structures with that edge"
 		v = edge.src()
 		w = edge.sink()
@@ -67,6 +72,7 @@ class DijkSP(object):
 class AcyclicSP(object):
 	def __init__(self, G, s):
 		"finds the shortest path in an edge-weighted DAG (directed acyclic graph)"
+		self._G = G
 		self._s = s
 		self._distTo = [_INF for _ in range(G.V())]
 		self._distTo[s] = 0
@@ -75,10 +81,13 @@ class AcyclicSP(object):
 		# visit vertices in topological order
 		top = TopologicalSort(G)
 		for v in top.order():
-			for e in G.adj(v):
-				self._relax(e)
+			self._relaxVertix(v)
 
-	def _relax(self, e):
+	def _relaxVertix(self, v):
+		for e in self._G.adj(v):
+			self._relaxEdge(e)
+
+	def _relaxEdge(self, e):
 		"relax edge e"
 		v = e.src()
 		w = e.sink()
@@ -131,6 +140,7 @@ class BellmanFordSP(object):
 		Graph can contain cycles; Graph can contain negative edges
 		Does not specify the order in which the vertices are relaxed
 		"""
+		self._G = G
 		self._s = src
 		self._edgeTo = [_SENTINEL for _ in range(G.V())]
 		self._distTo = [_INF for _ in range(G.V())]
@@ -146,10 +156,11 @@ class BellmanFordSP(object):
 			# get next vertex to relax
 			v = self._q.popleft()
 			self._onQ[v] = False
-			self._relax(G, v)
+			self._relax(v)
 
-	def _relax(self, G, v):
+	def _relax(self, v):
 		"relax vertex"
+		G = self._G
 		for e in G.adj(v):
 			# relax edge
 			w = e.sink()
