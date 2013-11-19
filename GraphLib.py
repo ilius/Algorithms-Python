@@ -247,6 +247,16 @@ class EdgeWeightedDigraph(object):
 			target = v_names.index(target_name)
 			G.addEdge(DEdge(source, target, weight))
 		return G, v_names
+
+	@staticmethod
+	def from_igraph(ig):
+		G = EdgeWeightedDigraph(V=ig.vcount())
+		for e in ig.es:
+			if not isinstance(e['weight'], (int, long, float)):
+				raise ValueError('invalid edge weight (%s->%s: %s)'%(e.source, e.target, e['weight']))
+			G.addEdge(DEdge(e.source, e.target, e['weight']))
+		return G
+
 	def V(self):
 		"returns number of vertices"
 		return self._V
